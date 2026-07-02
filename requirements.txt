@@ -1,0 +1,7 @@
+openai-whisper
+groq
+textblob
+plotly
+streamlit
+pydub
+simple-diarizer
