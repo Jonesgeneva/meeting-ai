@@ -31,50 +31,49 @@ st.title("🎙️ AI Meeting Intelligence System")
 st.caption("Upload any meeting audio or video → AI automatically splits, transcribes, and analyses it.")
 st.divider()
 
+
 # ---- SIDEBAR ----
 with st.sidebar:
     st.header("⚙️ Setup")
 
-    if key_source == "sidebar":
-        GROQ_API_KEY = st.text_input(
-            "Groq API Key",
-            type="password",
-            placeholder="paste your free Groq key here",
-            help="Get your free key at console.groq.com"
-        )
-        st.caption("Your key is never stored anywhere.")
-    else:
-        st.success("✅ API key loaded from secrets")
+    # always show the input box
+    # pre-fill from secrets if available (for demo mode)
+    try:
+        default_key = st.secrets["GROQ_API_KEY"]
+        demo_mode = True
+    except Exception:
+        default_key = ""
+        demo_mode = False
 
-    st.divider()
+    if demo_mode:
+        st.success("✅ Demo mode — API key pre-loaded")
+        st.caption("You can also use your own free key below")
 
-    # chunk size setting
-    st.header("🔧 Settings")
-    chunk_minutes = st.slider(
-        "Chunk size (minutes)",
-        min_value=2,
-        max_value=10,
-        value=5,
-        help="Long audio is split into chunks of this size. Smaller = more accurate. Larger = faster."
+    user_key = st.text_input(
+        "Groq API Key",
+        value="" if demo_mode else "",
+        type="password",
+        placeholder="paste your free key here (optional in demo)",
+        help="Get your free key at console.groq.com — no credit card needed"
     )
 
-    st.divider()
-    st.markdown("**✨ New features**")
-    st.markdown("""
-- 🎬 Supports VIDEO files (MP4, MOV)
-- ✂️ Auto-splits long audio into chunks
-- 🔄 Processes each chunk separately
-- 📝 Joins everything into one transcript
-- No manual cutting needed!
-""")
+    # use user's key if they typed one, else use demo key
+    if user_key.strip():
+        GROQ_API_KEY = user_key.strip()
+        st.success("✅ Using your personal API key")
+    elif demo_mode:
+        GROQ_API_KEY = default_key
+        st.info("ℹ️ Using demo API key")
+    else:
+        GROQ_API_KEY = None
+        st.warning("⚠️ Please enter a Groq API key")
 
     st.divider()
-    st.markdown("**Supported formats**")
-    st.markdown("""
-**Audio:** MP3, WAV, M4A\n
-**Video:** MP4, MOV, AVI\n
-**Any length:** 5 min → 3 hours
-""")
+    st.markdown("**🆓 Get your free key**")
+    st.markdown("[console.groq.com](https://console.groq.com) → Sign up → API Keys → Create")
+    st.caption("Free. No credit card. 14,400 requests/day.")
+
+
 
 # ---- FILE UPLOAD ----
 uploaded_file = st.file_uploader(
