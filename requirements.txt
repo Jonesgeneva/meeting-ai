@@ -3,5 +3,3 @@ groq
 textblob
 plotly
 streamlit
-pydub
-simple-diarizer
