@@ -37,7 +37,6 @@ with st.sidebar:
     st.header("⚙️ Setup")
 
     # always show the input box
-    # pre-fill from secrets if available (for demo mode)
     try:
         default_key = st.secrets["GROQ_API_KEY"]
         demo_mode = True
@@ -57,7 +56,6 @@ with st.sidebar:
         help="Get your free key at console.groq.com — no credit card needed"
     )
 
-    # use user's key if they typed one, else use demo key
     if user_key.strip():
         GROQ_API_KEY = user_key.strip()
         st.success("✅ Using your personal API key")
@@ -69,11 +67,37 @@ with st.sidebar:
         st.warning("⚠️ Please enter a Groq API key")
 
     st.divider()
+
+    # ← THIS BLOCK WAS MISSING — add it back
+    st.header("🔧 Settings")
+    chunk_minutes = st.slider(
+        "Chunk size (minutes)",
+        min_value=2,
+        max_value=10,
+        value=5,
+        help="Long audio is split into chunks of this size."
+    )
+
+    st.divider()
     st.markdown("**🆓 Get your free key**")
     st.markdown("[console.groq.com](https://console.groq.com) → Sign up → API Keys → Create")
     st.caption("Free. No credit card. 14,400 requests/day.")
 
-
+    st.divider()
+    st.markdown("**✨ New features**")
+    st.markdown("""
+- 🎬 Supports VIDEO files (MP4, MOV)
+- ✂️ Auto-splits long audio into chunks
+- 🔄 Processes each chunk separately
+- 📝 Joins everything into one transcript
+- No manual cutting needed!
+""")
+    st.markdown("**Supported formats**")
+    st.markdown("""
+**Audio:** MP3, WAV, M4A\n
+**Video:** MP4, MOV, AVI\n
+**Any length:** 5 min → 3 hours
+""")
 
 # ---- FILE UPLOAD ----
 uploaded_file = st.file_uploader(
